@@ -1,0 +1,119 @@
+{
+  "version": 1,
+  "buildings": [
+    {
+      "name": "residential_0",
+      "type": "residential",
+      "width": 11.1,
+      "depth": 6.2,
+      "floors": 4,
+      "style": "brick",
+      "file": "residential_0.glb"
+    },
+    {
+      "name": "residential_1",
+      "type": "residential",
+      "width": 7.9,
+      "depth": 10.8,
+      "floors": 6,
+      "style": "brick",
+      "file": "residential_1.glb"
+    },
+    {
+      "name": "residential_2",
+      "type": "residential",
+      "width": 6.7,
+      "depth": 6.8,
+      "floors": 8,
+      "style": "stone",
+      "file": "residential_2.glb"
+    },
+    {
+      "name": "residential_3",
+      "type": "residential",
+      "width": 12.9,
+      "depth": 10.6,
+      "floors": 7,
+      "style": "brick",
+      "file": "residential_3.glb"
+    },
+    {
+      "name": "residential_4",
+      "type": "residential",
+      "width": 7.9,
+      "depth": 6.8,
+      "floors": 4,
+      "style": "stone",
+      "file": "residential_4.glb"
+    },
+    {
+      "name": "residential_5",
+      "type": "residential",
+      "width": 8.1,
+      "depth": 13.5,
+      "floors": 7,
+      "style": "brick",
+      "file": "residential_5.glb"
+    },
+    {
+      "name": "residential_6",
+      "type": "residential",
+      "width": 8.6,
+      "depth": 12.1,
+      "floors": 2,
+      "style": "brick",
+      "file": "residential_6.glb"
+    },
+    {
+      "name": "residential_7",
+      "type": "residential",
+      "width": 9.2,
+      "depth": 13.3,
+      "floors": 5,
+      "style": "brick",
+      "file": "residential_7.glb"
+    },
+    {
+      "name": "office_0",
+      "type": "office",
+      "width": 17.6,
+      "depth": 18.6,
+      "floors": 7,
+      "file": "office_0.glb"
+    },
+    {
+      "name": "office_1",
+      "type": "office",
+      "width": 15.3,
+      "depth": 19.7,
+      "floors": 5,
+      "file": "office_1.glb"
+    },
+    {
+      "name": "office_2",
+      "type": "office",
+      "width": 12.9,
+      "depth": 11.6,
+      "floors": 5,
+      "file": "office_2.glb"
+    },
+    {
+      "name": "office_3",
+      "type": "office",
+      "width": 18.7,
+      "depth": 13.0,
+      "floors": 15,
+      "file": "office_3.glb"
+    },
+    {
+      "name": "office_4",
+      "type": "office",
+      "width": 19.2,
+      "depth": 16.0,
+      "floors": 12,
+      "file": "office_4.glb"
+    }
+  ],
+  "generated_by": "blender_procedural_pipeline",
+  "output_dir": "C:\\Users\\vikas\\recorded-world\\pc-client\\public\\models"
+}

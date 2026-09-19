@@ -1,0 +1,37 @@
+.env
+.env.local
+.env.production
+node_modules/
+__pycache__/
+*.pyc
+.vite/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+uploads/
+test_data/
+*.db
+*.sqlite3
+
+# UE5
+ue-client/Binaries/
+ue-client/Intermediate/
+ue-client/DerivedDataCache/
+ue-client/Saved/
+ue-client/.vs/
+ue-client/*.sln
+ue-client/*.vcxproj*
+ue-client/Content/Scripts/__pycache__/
+ue-client/Content/Python/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

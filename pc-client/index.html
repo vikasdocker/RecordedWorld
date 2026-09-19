@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recorded World</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #000; font-family: monospace; }
+    canvas { display: block; }
+    #ui {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: #0f0;
+      font-size: 14px;
+      background: rgba(0,0,0,0.7);
+      padding: 10px;
+      border-radius: 5px;
+      backdrop-filter: blur(5px);
+      z-index: 10;
+      max-width: calc(100vw - 20px);
+    }
+    #status { color: #00ff88; }
+    #player-count { color: #888; margin-top: 5px; }
+    #coordinates { color: #666; margin-top: 5px; font-size: 11px; }
+    #chat {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      width: min(350px, calc(100vw - 20px));
+      background: rgba(0,0,0,0.7);
+      border-radius: 5px;
+      padding: 10px;
+      backdrop-filter: blur(5px);
+      z-index: 20;
+    }
+    #chat-messages {
+      height: 120px;
+      overflow-y: auto;
+      color: #fff;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    #chat-messages div { margin: 2px 0; }
+    #chat-messages strong { color: #00ff88; }
+    #chat-input {
+      width: 100%;
+      background: #1a1a2e;
+      border: 1px solid #00ff88;
+      color: #fff;
+      padding: 8px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    #chat-input:focus { outline: none; border-color: #00ffaa; }
+    #controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #888;
+      font-size: 12px;
+      background: rgba(0,0,0,0.7);
+      padding: 10px;
+      border-radius: 5px;
+      backdrop-filter: blur(5px);
+      z-index: 30;
+    }
+    #controls kbd {
+      background: #333;
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #00ff88;
+    }
+    #avatar-panel {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      padding: 10px;
+      border-radius: 5px;
+      color: #888;
+      font-size: 12px;
+      backdrop-filter: blur(5px);
+      z-index: 20;
+    }
+    #avatar-panel div { margin-bottom: 6px; }
+    #player-list {
+      position: absolute;
+      top: 10px;
+      right: 180px;
+      width: 180px;
+      background: rgba(0,0,0,0.7);
+      padding: 10px;
+      border-radius: 5px;
+      color: #888;
+      font-size: 12px;
+      backdrop-filter: blur(5px);
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 30;
+    }
+    .player-list-title {
+      color: #00ff88;
+      font-weight: bold;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 4px;
+    }
+    .player-list-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 0;
+      cursor: pointer;
+    }
+    .player-list-item:hover { background: rgba(0,255,136,0.1); border-radius: 3px; }
+    .player-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .player-name {
+      color: #ccc;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #location-detail {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(400px, calc(100vw - 20px));
+      background: rgba(0,0,0,0.85);
+      padding: 15px;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,255,136,0.3);
+      z-index: 25;
+    }
+    .loc-title {
+      color: #00ff88;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .loc-creator {
+      color: #88aaff;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .loc-desc {
+      color: #aaa;
+      font-size: 12px;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .loc-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: #888;
+      flex-wrap: wrap;
+    }
+    .loc-meta span {
+      background: rgba(255,255,255,0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .loc-tags {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #aaddff;
+    }
+    .loc-accuracy { color: #ffaa00; }
+    .loc-confidence { color: #00ccff; }
+    .loc-quality { font-weight: bold; padding: 2px 8px; border-radius: 4px; }
+    .quality-high { color: #00ff88; background: rgba(0,255,136,0.15); }
+    .quality-medium { color: #ffcc00; background: rgba(255,204,0,0.15); }
+    .quality-low { color: #ff4444; background: rgba(255,68,68,0.15); }
+    #color-picker {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .color-btn:hover { transform: scale(1.2); transition: transform 0.1s; }
+    #minimap {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 120px;
+      background: rgba(0,0,0,0.6);
+      border: 2px solid #00ff88;
+      border-radius: 50%;
+      overflow: hidden;
+      backdrop-filter: blur(5px);
+      z-index: 15;
+      display: none;
+    }
+    #minimap canvas {
+      width: 100%;
+      height: 100%;
+    }
+    #loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0a0a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #00ff88;
+      font-size: 24px;
+      z-index: 1000;
+    }
+    #loading .subtitle {
+      color: #888;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    #loading .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #333;
+      border-top: 3px solid #00ff88;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-top: 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #stats {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #ffcc00;
+      font-size: 11px;
+      background: rgba(0,0,0,0.6);
+      padding: 4px 10px;
+      border-radius: 4px;
+      backdrop-filter: blur(5px);
+      z-index: 10;
+      font-family: monospace;
+      pointer-events: none;
+      white-space: pre;
+    }
+    /* City Selector */
+    #city-selector {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(500px, calc(100vw - 40px));
+      background: rgba(10,10,30,0.95);
+      padding: 20px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 13px;
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(0,255,136,0.4);
+      z-index: 100;
+      display: none;
+    }
+    #city-selector h2 {
+      color: #00ff88;
+      font-size: 18px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .city-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .city-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .city-card:hover {
+      border-color: #00ff88;
+      background: rgba(0,255,136,0.1);
+    }
+    .city-card.active {
+      border-color: #00ff88;
+      background: rgba(0,255,136,0.15);
+    }
+    .city-name {
+      color: #00ff88;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .city-country {
+      color: #888;
+      font-size: 11px;
+    }
+    .city-desc {
+      color: #aaa;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+    .city-close {
+      display: block;
+      margin: 12px auto 0;
+      background: rgba(0,255,136,0.2);
+      border: 1px solid #00ff88;
+      color: #00ff88;
+      padding: 6px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .city-close:hover { background: rgba(0,255,136,0.3); }
+    /* Friends Panel */
+    #friends-panel {
+      position: absolute;
+      top: 10px;
+      left: 220px;
+      width: 220px;
+      background: rgba(0,0,0,0.8);
+      border-radius: 8px;
+      padding: 10px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,255,136,0.2);
+      z-index: 35;
+      display: none;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+    .friends-title {
+      color: #00ff88;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 4px;
+    }
+    .friend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .friend-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .friend-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .friend-dot.online { background: #00ff88; }
+    .friend-dot.offline { background: #555; }
+    .friend-name { color: #ccc; font-size: 12px; }
+    .friend-btn {
+      background: rgba(0,255,136,0.15);
+      border: 1px solid #00ff88;
+      color: #00ff88;
+      padding: 2px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 10px;
+      font-family: monospace;
+    }
+    .friend-btn:hover { background: rgba(0,255,136,0.3); }
+    .friend-btn.danger { border-color: #ff4444; color: #ff4444; }
+    #friend-search {
+      width: 100%;
+      background: #1a1a2e;
+      border: 1px solid #333;
+      color: #fff;
+      padding: 6px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+    #friend-search:focus { outline: none; border-color: #00ff88; }
+    /* Visibility Panel */
+    #visibility-panel {
+      position: absolute;
+      bottom: 120px;
+      right: 10px;
+      background: rgba(0,0,0,0.8);
+      border-radius: 8px;
+      padding: 10px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,255,136,0.2);
+      z-index: 25;
+      display: none;
+      width: 200px;
+    }
+    .vis-title {
+      color: #00ff88;
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .vis-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: #ccc;
+      transition: background 0.15s;
+    }
+    .vis-option:hover { background: rgba(255,255,255,0.05); }
+    .vis-option.active { background: rgba(0,255,136,0.15); color: #00ff88; }
+    .vis-icon { font-size: 14px; width: 20px; text-align: center; }
+    /* DM Panel */
+    #dm-panel {
+      position: absolute;
+      bottom: 60px;
+      right: 10px;
+      width: 250px;
+      background: rgba(0,0,0,0.85);
+      border-radius: 8px;
+      padding: 10px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,255,136,0.3);
+      z-index: 25;
+      display: none;
+    }
+    .dm-header {
+      color: #00ff88;
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .dm-close {
+      background: none;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .dm-close:hover { color: #ff4444; }
+    #dm-messages {
+      height: 100px;
+      overflow-y: auto;
+      color: #fff;
+      font-size: 11px;
+      margin-bottom: 6px;
+    }
+    #dm-messages div { margin: 2px 0; }
+    #dm-messages strong { color: #00ff88; }
+    #dm-input {
+      width: 100%;
+      background: #1a1a2e;
+      border: 1px solid #00ff88;
+      color: #fff;
+      padding: 6px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 11px;
+    }
+    #dm-input:focus { outline: none; border-color: #00ffaa; }
+    @media (max-width: 600px) {
+      #controls { display: none; }
+      #player-list { display: none; }
+      #stats { display: none; }
+      #friends-panel { display: none !important; }
+      #visibility-panel { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div>Recorded World</div>
+    <div class="subtitle">The Real World. In Game.</div>
+    <div class="spinner"></div>
+  </div>
+  <div id="stats">FPS: -- | Draw Calls: -- | Triangles: --</div>
+  <div id="ui">
+    <div>Recorded World v0.4.0</div>
+    <div id="status">Connecting...</div>
+    <div id="player-count">Players: 1</div>
+    <div id="coordinates">40.785°N, 73.968°W</div>
+    <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
+      <button id="btn-cities" style="background:rgba(0,255,136,0.15);border:1px solid #00ff88;color:#00ff88;padding:3px 8px;border-radius:3px;cursor:pointer;font-family:monospace;font-size:11px;">Cities</button>
+      <button id="btn-friends" style="background:rgba(0,255,136,0.15);border:1px solid #00ff88;color:#00ff88;padding:3px 8px;border-radius:3px;cursor:pointer;font-family:monospace;font-size:11px;">Friends</button>
+      <button id="btn-visibility" style="background:rgba(0,255,136,0.15);border:1px solid #00ff88;color:#00ff88;padding:3px 8px;border-radius:3px;cursor:pointer;font-family:monospace;font-size:11px;">Visibility</button>
+    </div>
+  </div>
+  <div id="controls">
+    <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move</div>
+    <div><kbd>Enter</kbd> Send Chat</div>
+    <div><kbd>M</kbd> Minimap</div>
+    <div><kbd>Tab</kbd> Friends</div>
+    <div><kbd>V</kbd> Visibility</div>
+  </div>
+  <div id="chat">
+    <div id="chat-messages"></div>
+    <input id="chat-input" placeholder="Type a message..." />
+  </div>
+  <div id="avatar-panel">
+    <div>Avatar Color</div>
+    <div id="color-picker"></div>
+  </div>
+  <div id="player-list">
+    <div class="player-list-title">Players Online</div>
+    <div id="player-list-content"></div>
+  </div>
+  <div id="location-detail" style="display: none;">
+    <div id="location-detail-content"></div>
+    <div style="margin-top:10px; display:flex; gap:8px;">
+      <button id="btn-teleport" style="background:rgba(0,255,136,0.2);border:1px solid #00ff88;color:#00ff88;padding:4px 12px;border-radius:4px;cursor:pointer;font-family:monospace;font-size:11px;">Teleport Here</button>
+      <button id="btn-load-model" style="background:rgba(136,170,255,0.2);border:1px solid #88aaff;color:#88aaff;padding:4px 12px;border-radius:4px;cursor:pointer;font-family:monospace;font-size:11px;">Load 3D Model</button>
+    </div>
+    <button id="location-detail-close" style="position: absolute; top: 5px; right: 5px; background: none; border: none; color: #888; cursor: pointer; font-size: 16px;">&times;</button>
+  </div>
+  <div id="city-selector">
+    <h2>Explore the World</h2>
+    <div class="city-grid" id="city-grid"></div>
+    <button class="city-close" id="city-close">Close</button>
+  </div>
+  <div id="friends-panel">
+    <div class="friends-title">Friends</div>
+    <input id="friend-search" placeholder="Search users..." />
+    <div id="friends-list"></div>
+  </div>
+  <div id="visibility-panel">
+    <div class="vis-title">Player Visibility</div>
+    <div class="vis-option active" data-vis="public">
+      <span class="vis-icon">&#127760;</span>
+      <span>Public (Default)</span>
+    </div>
+    <div class="vis-option" data-vis="friends_only">
+      <span class="vis-icon">&#128274;</span>
+      <span>Friends Only</span>
+    </div>
+    <div class="vis-option" data-vis="hidden">
+      <span class="vis-icon">&#128065;</span>
+      <span>Hidden</span>
+    </div>
+  </div>
+  <div id="dm-panel">
+    <div class="dm-header">
+      <span id="dm-target-name">DM</span>
+      <button class="dm-close" id="dm-close">&times;</button>
+    </div>
+    <div id="dm-messages"></div>
+    <input id="dm-input" placeholder="Type a message..." />
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+  <script>
+    setTimeout(() => {
+      const loading = document.getElementById('loading');
+      if (loading) {
+        loading.style.transition = 'opacity 0.5s';
+        loading.style.opacity = '0';
+        setTimeout(() => loading.remove(), 500);
+      }
+    }, 1500);
+  </script>
+</body>
+</html>

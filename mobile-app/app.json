@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "Recorded World",
+    "slug": "recorded-world",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a1a2e"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.recordedworld.mobile",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Recorded World needs camera access to capture real-world environments for 3D world generation.",
+        "NSMicrophoneUsageDescription": "Recorded World needs microphone access for video recording.",
+        "NSLocationWhenInUseUsageDescription": "Recorded World uses your location to geo-tag captures.",
+        "NSLocationAlwaysUsageDescription": "Recorded World uses your location to geo-tag captures in the background."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a1a2e"
+      },
+      "package": "com.recordedworld.mobile",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Recorded World needs camera access to capture real-world environments.",
+          "microphonePermission": "Recorded World needs microphone access for video recording.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Recorded World uses your location to geo-tag captures."
+        }
+      ],
+      "expo-asset",
+      "expo-font"
+    ]
+  }
+}
