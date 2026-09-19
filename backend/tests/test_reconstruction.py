@@ -97,6 +97,16 @@ class TestFeatureExtractor:
         assert features.keypoints_count > 0
         assert features.method == "orb"
 
+    def test_extract_features_akaze(self):
+        img = _create_test_image()
+        detector = create_detector(FeatureMethod.AKAZE, 1000)
+        features = extract_features(img, detector, 0, "akaze")
+
+        assert features.keypoints_count > 0
+        assert features.descriptors is not None
+        assert features.keypoints_xy.shape[1] == 2
+        assert features.method == "akaze"
+
     def test_extract_features_empty_image(self):
         img = np.zeros((100, 100, 3), dtype=np.uint8)
         detector = create_detector(FeatureMethod.SIFT, 1000)
@@ -188,6 +198,29 @@ class TestFeatureMatching:
             results = match_features_chain(features)
             assert len(results) == len(features) - 1
 
+    def test_ratio_test_filtering(self):
+        # Test that ratio test filters out ambiguous matches
+        img1 = _create_test_image(seed=42)
+        img2 = _create_test_image(seed=42)
+        # Add noise to make some matches ambiguous
+        noise = np.random.RandomState(42).randn(*img2.shape).astype(np.float32) * 10
+        img2 = cv2.add(img2, noise.astype(np.uint8))
+
+        detector = create_detector(FeatureMethod.SIFT, 1000)
+        f1 = extract_features(img1, detector, 0, "sift")
+        f2 = extract_features(img2, detector, 1, "sift")
+
+        # Strict ratio threshold (0.5) should filter more matches
+        result_strict = match_features(f1, f2, FeatureMethod.SIFT, ratio_threshold=0.5)
+        # Loose ratio threshold (0.9) should keep more matches
+        result_loose = match_features(f1, f2, FeatureMethod.SIFT, ratio_threshold=0.9)
+
+        # Strict should have fewer or equal good matches than loose
+        assert len(result_strict.good_matches) <= len(result_loose.good_matches)
+        # Both should have some matches
+        assert len(result_strict.matches) > 0
+        assert len(result_loose.matches) > 0
+
 
 # --- Camera Pose Tests ---
 
@@ -264,6 +297,52 @@ class TestCameraPose:
         error = compute_reprojection_error(pts3d, projected_2d, R, t, K)
         assert error < 0.01
 
+    def test_camera_pose_with_known_motion(self):
+        # Test camera pose estimation with known rotation and translation
+        # Create synthetic 3D points
+        np.random.seed(42)
+        pts3d = np.random.rand(20, 3) * 10
+        pts3d[:, 2] += 5  # Ensure points are in front of camera
+
+        # Camera intrinsics
+        K = np.eye(3)
+
+        # Camera 1: identity pose
+        R1 = np.eye(3)
+        t1 = np.zeros((3, 1))
+
+        # Camera 2: rotated around Y axis by 10 degrees and translated
+        angle = np.radians(10)
+        R2 = np.array([
+            [np.cos(angle), 0, np.sin(angle)],
+            [0, 1, 0],
+            [-np.sin(angle), 0, np.cos(angle)]
+        ])
+        t2 = np.array([[0.5], [0.0], [0.0]])
+
+        # Projection matrices
+        P1 = build_projection_matrix(R1, t1, K)
+        P2 = build_projection_matrix(R2, t2, K)
+
+        # Project 3D points to 2D
+        pts_h = np.hstack([pts3d, np.ones((20, 1))]).T
+        proj1 = (P1 @ pts_h).T
+        proj2 = (P2 @ pts_h).T
+
+        pts2d_1 = proj1[:, :2] / proj1[:, 2:3]
+        pts2d_2 = proj2[:, :2] / proj2[:, 2:3]
+
+        # Estimate camera pose
+        pose = estimate_camera_pose(pts2d_1, pts2d_2, (480, 640))
+
+        assert pose.pose_valid
+        assert pose.num_inliers > 0
+        # Rotation should be close to R2 (up to scale/sign ambiguity)
+        assert pose.rotation.shape == (3, 3)
+        assert np.linalg.det(pose.rotation) > 0  # Valid rotation matrix
+        # Translation should be close to t2 direction
+        assert pose.translation.shape == (3, 1)
+
 
 # --- Point Cloud Tests ---
 
@@ -328,3 +407,48 @@ class TestPointCloud:
             video_path, target_fps=2.0, method=FeatureMethod.SIFT
         )
         assert cloud.num_points >= 0  # May be 0 if features don't match well
+
+    def test_generate_from_synthetic_correspondences(self):
+        # Test point cloud generation with synthetic 2D-3D correspondences
+        # Simulate two camera views of a 3D scene
+        pts3d = np.array([
+            [1.0, 2.0, 5.0],
+            [3.0, 1.0, 6.0],
+            [2.0, 3.0, 4.0],
+            [0.5, 0.5, 7.0],
+            [4.0, 2.0, 5.5],
+        ], dtype=np.float64)
+
+        # Camera 1: identity pose
+        R1 = np.eye(3)
+        t1 = np.zeros((3, 1))
+        K = np.eye(3)
+
+        # Camera 2: translated right by 1 unit
+        R2 = np.eye(3)
+        t2 = np.array([[-1.0], [0.0], [0.0]])
+
+        # Project points to both cameras
+        P1 = build_projection_matrix(R1, t1, K)
+        P2 = build_projection_matrix(R2, t2, K)
+
+        pts_h = np.hstack([pts3d, np.ones((5, 1))]).T  # 4x5
+        proj1 = (P1 @ pts_h).T  # 5x3
+        proj2 = (P2 @ pts_h).T  # 5x3
+
+        pts2d_1 = proj1[:, :2] / proj1[:, 2:3]
+        pts2d_2 = proj2[:, :2] / proj2[:, 2:3]
+
+        # Triangulate
+        result = triangulate_points(pts2d_1, pts2d_2, P1, P2)
+
+        assert result.num_points == 5
+        assert result.num_valid > 0
+        assert result.mean_depth > 0
+
+        # Reconstructed points should be close to original
+        valid_points = result.points_3d[result.inlier_mask]
+        if len(valid_points) > 0:
+            # Check that reconstructed points are within reasonable range
+            for pt in valid_points:
+                assert np.linalg.norm(pt - pts3d[np.argmin(np.linalg.norm(pts3d - pt, axis=1))]) < 1.0

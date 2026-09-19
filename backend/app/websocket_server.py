@@ -11,11 +11,14 @@ Features:
 
 import asyncio
 import json
+import logging
 import math
 import time
 from typing import Dict, Set, Optional, List, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
+
+logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -112,9 +115,12 @@ class MultiplayerServer:
         heartbeat_interval: float = 30.0,
         heartbeat_timeout: float = 60.0,
         view_radius_meters: float = 500.0,
-        position_update_rate_limit: float = 0.1,
-        max_speed_ms: float = 10.0,  # max movement speed in meters/second
-        max_position_jump_meters: float = 50.0,  # max allowed position jump
+        position_update_rate_limit: float = 1.0 / 30.0,  # max 30 updates/sec
+        max_speed_units_sec: float = 600.0,  # running speed cap
+        max_position_jump_units: float = 500.0,  # teleport detection threshold
+        world_min: float = -500.0,
+        world_max: float = 500.0,
+        min_update_interval: float = 0.016,  # 60fps cap
     ):
         self.players: Dict[int, Player] = {}
         self.worlds: Dict[int, Set[int]] = {}
@@ -123,8 +129,11 @@ class MultiplayerServer:
         self.heartbeat_timeout = heartbeat_timeout
         self.view_radius_meters = view_radius_meters
         self.position_update_rate_limit = position_update_rate_limit
-        self.max_speed_ms = max_speed_ms
-        self.max_position_jump_meters = max_position_jump_meters
+        self.max_speed_units_sec = max_speed_units_sec
+        self.max_position_jump_units = max_position_jump_units
+        self.world_min = world_min
+        self.world_max = world_max
+        self.min_update_interval = min_update_interval
         self._heartbeat_task: Optional[asyncio.Task] = None
         # Callbacks for friendship/blocking checks (injected by caller)
         self._is_friend_func = None
@@ -331,12 +340,15 @@ class MultiplayerServer:
         """Process position update with rate limiting, speed validation, and spatial interest."""
         now = time.time()
 
-        # Rate limiting
+        # Rate limiting: max 30 updates per second per player
         if now - player.last_position_update < self.position_update_rate_limit:
             return
 
         new_position = data.get("position", player.position)
         new_rotation = data.get("rotation", player.rotation)
+
+        # Normalize rotation to 0-360
+        new_rotation = self._validate_rotation(new_rotation)
 
         # Initialize on first update
         is_first_update = player.last_position_update == 0
@@ -357,10 +369,14 @@ class MultiplayerServer:
                 await player.ws.send_json({
                     "type": MessageType.POSITION_CORRECTION,
                     "position": corrected_position,
-                    "reason": "speed_exceeded",
+                    "reason": "movement_violation",
                 })
                 player.position = corrected_position
                 player.server_position = corrected_position.copy()
+                logger.info(
+                    "Position corrected for player %s (%d): %s -> %s",
+                    player.username, player.id, new_position, corrected_position,
+                )
             else:
                 dt = now - player.last_position_update
                 if dt > 0:
@@ -553,6 +569,13 @@ class MultiplayerServer:
         """
         Validate player movement against server rules.
 
+        Checks:
+        - Rate limiting (delta_time >= 0.016s for 60fps cap)
+        - Teleport detection (reject moves > 500 units in one frame)
+        - Speed limit enforcement (max 600 units/sec)
+        - World bounds checking (-500 to 500 on all axes)
+        - Rotation normalization (0-360)
+
         Returns:
             (is_valid, corrected_position) - if invalid, corrected_position
             is where the server thinks the player should be
@@ -560,28 +583,74 @@ class MultiplayerServer:
         old_position = player.last_valid_position
         dt = timestamp - player.last_position_update if player.last_position_update > 0 else 0.1
 
+        # Anti-speedhack: reject moves with delta_time < 0.016 (60fps cap)
+        if dt < self.min_update_interval:
+            logger.warning(
+                "Anti-speedhack: player %s (%d) sent update with dt=%.4f < %.4f",
+                player.username, player.id, dt, self.min_update_interval,
+            )
+            return False, old_position
+
         if dt <= 0:
             return True, new_position
 
         # Calculate distance moved
         distance = self._calculate_distance(old_position, new_position)
 
-        # Check max position jump (teleport detection)
-        if distance > self.max_position_jump_meters:
+        # Teleport detection: reject moves > 500 units in one frame
+        if distance > self.max_position_jump_units:
+            logger.warning(
+                "Teleport detected: player %s (%d) moved %.1f units in one frame (max %.1f)",
+                player.username, player.id, distance, self.max_position_jump_units,
+            )
             return False, old_position
 
-        # Check speed
+        # Speed limit enforcement: max 600 units/sec
         speed = distance / dt
-        if speed > self.max_speed_ms:
-            # Allow movement up to max speed
-            max_distance = self.max_speed_ms * dt
+        if speed > self.max_speed_units_sec:
+            logger.warning(
+                "Speed exceeded: player %s (%d) moving at %.1f units/sec (max %.1f)",
+                player.username, player.id, speed, self.max_speed_units_sec,
+            )
+            max_distance = self.max_speed_units_sec * dt
             if distance > 0:
-                # Interpolate to max allowed position
                 ratio = max_distance / distance
                 corrected = self._interpolate_position(old_position, new_position, ratio)
                 return False, corrected
 
+        # World bounds checking: reject positions outside -500 to 500
+        corrected_pos = self._enforce_bounds(new_position)
+        if corrected_pos != new_position:
+            logger.warning(
+                "Bounds violation: player %s (%d) at %s, corrected to %s",
+                player.username, player.id, new_position, corrected_pos,
+            )
+            return False, corrected_pos
+
         return True, new_position
+
+    def _enforce_bounds(self, position: dict) -> dict:
+        """Clamp position to world bounds (-500 to 500) on all axes."""
+        result = position.copy()
+        clamped = False
+
+        for axis in ("x", "y", "z", "lat", "lon", "alt"):
+            if axis in result:
+                if result[axis] < self.world_min:
+                    result[axis] = self.world_min
+                    clamped = True
+                elif result[axis] > self.world_max:
+                    result[axis] = self.world_max
+                    clamped = True
+
+        return result
+
+    def _validate_rotation(self, rotation: float) -> float:
+        """Normalize rotation to [0, 360) range."""
+        rotation = rotation % 360
+        if rotation < 0:
+            rotation += 360
+        return rotation
 
     def _interpolate_position(self, start: dict, end: dict, t: float) -> dict:
         """Interpolate between two positions by factor t (0..1)."""

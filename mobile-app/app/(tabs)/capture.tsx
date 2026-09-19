@@ -16,6 +16,14 @@ import { useLocation } from '@/hooks/useLocation';
 import { useUpload } from '@/hooks/useUpload';
 
 type CaptureState = 'idle' | 'recording' | 'stopping' | 'uploading' | 'done' | 'error';
+type VideoQuality = '720p' | '1080p';
+
+const MAX_DURATION_SECONDS = 60;
+const MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024; // 500 MB
+const QUALITY_PRESETS: Record<VideoQuality, { width: number; height: number }> = {
+  '720p': { width: 1280, height: 720 },
+  '1080p': { width: 1920, height: 1080 },
+};
 
 function getHeadingLabel(heading: number): string {
   const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
@@ -31,6 +39,7 @@ export default function CaptureScreen() {
   const [captureState, setCaptureState] = useState<CaptureState>('idle');
   const [duration, setDuration] = useState(0);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [videoQuality, setVideoQuality] = useState<VideoQuality>('720p');
   const cameraRef = useRef<CameraView>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -45,7 +54,12 @@ export default function CaptureScreen() {
   const startTimer = () => {
     setDuration(0);
     timerRef.current = setInterval(() => {
-      setDuration((prev) => prev + 1);
+      setDuration((prev) => {
+        if (prev >= MAX_DURATION_SECONDS - 1) {
+          stopRecording();
+        }
+        return prev + 1;
+      });
     }, 1000);
   };
 
@@ -65,12 +79,19 @@ export default function CaptureScreen() {
   const startRecording = async () => {
     if (!cameraRef.current) return;
 
+    if (duration >= MAX_DURATION_SECONDS) {
+      Alert.alert('Duration Limit', `Maximum recording time is ${MAX_DURATION_SECONDS} seconds.`);
+      return;
+    }
+
     setCaptureState('recording');
     startTimer();
 
     try {
+      const preset = QUALITY_PRESETS[videoQuality];
       await cameraRef.current.recordAsync({
-        maxDuration: 300,
+        maxDuration: MAX_DURATION_SECONDS,
+        quality: videoQuality,
       });
     } catch (error) {
       console.error('Recording error:', error);
@@ -97,6 +118,32 @@ export default function CaptureScreen() {
   };
 
   const handleVideoCapture = async (uri: string) => {
+    try {
+      const fileInfo = await FileSystem.getInfoAsync(uri);
+      if (!fileInfo.exists) {
+        Alert.alert('Error', 'Recorded video file not found.');
+        setCaptureState('error');
+        return;
+      }
+      if (fileInfo.size > MAX_FILE_SIZE_BYTES) {
+        Alert.alert(
+          'File Too Large',
+          `Video is ${(fileInfo.size / (1024 * 1024)).toFixed(0)} MB. Maximum is ${MAX_FILE_SIZE_BYTES / (1024 * 1024)} MB.`
+        );
+        setCaptureState('error');
+        return;
+      }
+    } catch (error) {
+      console.error('File validation error:', error);
+      Alert.alert('Error', 'Could not validate video file.');
+      setCaptureState('error');
+      return;
+    }
+
+    if (duration >= MAX_DURATION_SECONDS) {
+      Alert.alert('Duration Limit', `Recording was capped at ${MAX_DURATION_SECONDS} seconds.`);
+    }
+
     setCaptureState('uploading');
     setUploadProgress(0);
 
@@ -226,6 +273,36 @@ export default function CaptureScreen() {
           {captureState === 'done' && 'Complete!'}
           {captureState === 'error' && 'Error occurred. Tap to retry'}
         </Text>
+
+        {captureState === 'idle' && (
+          <View style={styles.qualitySelector}>
+            {(['720p', '1080p'] as VideoQuality[]).map((q) => (
+              <TouchableOpacity
+                key={q}
+                style={[
+                  styles.qualityButton,
+                  videoQuality === q && styles.qualityButtonActive,
+                ]}
+                onPress={() => setVideoQuality(q)}
+              >
+                <Text
+                  style={[
+                    styles.qualityButtonText,
+                    videoQuality === q && styles.qualityButtonTextActive,
+                  ]}
+                >
+                  {q}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {captureState === 'recording' && duration >= MAX_DURATION_SECONDS - 10 && (
+          <Text style={styles.durationWarning}>
+            Max duration: {MAX_DURATION_SECONDS}s
+          </Text>
+        )}
 
         <TouchableOpacity
           style={[
@@ -460,5 +537,35 @@ const styles = StyleSheet.create({
     color: Colors.background,
     fontSize: 16,
     fontWeight: '600',
+  },
+  qualitySelector: {
+    flexDirection: 'row',
+    marginBottom: 12,
+    gap: 8,
+  },
+  qualityButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: Colors.surfaceLight || '#333',
+    borderWidth: 1,
+    borderColor: Colors.border || '#555',
+  },
+  qualityButtonActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  qualityButtonText: {
+    color: Colors.textSecondary || '#aaa',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  qualityButtonTextActive: {
+    color: Colors.background,
+  },
+  durationWarning: {
+    color: Colors.warning,
+    fontSize: 13,
+    marginBottom: 8,
   },
 });

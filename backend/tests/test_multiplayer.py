@@ -42,8 +42,8 @@ def server():
         heartbeat_timeout=5.0,
         view_radius_meters=500.0,
         position_update_rate_limit=0.0,
-        max_speed_ms=100.0,
-        max_position_jump_meters=1000.0,
+        max_speed_units_sec=100.0,
+        max_position_jump_units=1000.0,
     )
 
 
@@ -55,8 +55,8 @@ def spatial_server():
         heartbeat_timeout=5.0,
         view_radius_meters=500.0,
         position_update_rate_limit=0.0,
-        max_speed_ms=5000000.0,  # ~5000 km/s for cross-city jumps
-        max_position_jump_meters=10000000.0,  # 10,000 km
+        max_speed_units_sec=5000000.0,  # ~5000 km/s for cross-city jumps
+        max_position_jump_units=10000000.0,  # 10,000 km
     )
 
 
@@ -542,7 +542,7 @@ class TestAuthoritativeMovement:
         # Should be rejected and sent back to original position
         correction_msgs = [m for m in ws1.messages if m.get("type") == MessageType.POSITION_CORRECTION]
         assert len(correction_msgs) == 1
-        assert correction_msgs[0]["reason"] == "speed_exceeded"
+        assert correction_msgs[0]["reason"] == "movement_violation"
 
     def test_velocity_calculated(self, server):
         ws1 = MockWebSocket()

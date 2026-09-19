@@ -56,8 +56,8 @@ def server():
         heartbeat_timeout=5.0,
         view_radius_meters=500.0,
         position_update_rate_limit=0.0,
-        max_speed_ms=5000000.0,
-        max_position_jump_meters=10000000.0,
+        max_speed_units_sec=5000000.0,
+        max_position_jump_units=10000000.0,
     )
 
 
@@ -69,8 +69,8 @@ def server_with_friends():
         heartbeat_timeout=5.0,
         view_radius_meters=500.0,
         position_update_rate_limit=0.0,
-        max_speed_ms=5000000.0,
-        max_position_jump_meters=10000000.0,
+        max_speed_units_sec=5000000.0,
+        max_position_jump_units=10000000.0,
     )
     # Simple in-memory friendship store
     friendships = set()

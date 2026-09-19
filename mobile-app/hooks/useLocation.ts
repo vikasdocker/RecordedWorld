@@ -5,6 +5,7 @@ export function useLocation() {
   const [location, setLocation] = useState<LocationData | null>(null);
   const [permission, setPermission] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
+  const [permissionDeniedMessage, setPermissionDeniedMessage] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -18,6 +19,8 @@ export function useLocation() {
         await locationService.startWatching((newLocation) => {
           setLocation(newLocation);
         });
+      } else {
+        setPermissionDeniedMessage(locationService.getPermissionDeniedMessage());
       }
 
       setLoading(false);
@@ -33,5 +36,5 @@ export function useLocation() {
     setLocation(current);
   }, []);
 
-  return { location, permission, loading, refresh };
+  return { location, permission, loading, refresh, permissionDeniedMessage };
 }

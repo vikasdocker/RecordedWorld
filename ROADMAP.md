@@ -131,8 +131,8 @@ LAYER 7: Players
 
 ### Tasks
 
-- [~] IN PROGRESS — Camera capture (basic recording works)
-- [~] IN PROGRESS — GPS recording (works, needs validation)
+- [x] COMPLETE — Camera capture (permission validation, quality settings 720p/1080p, 60s duration limit, file size check) — COMPLETE 2026-09-19
+- [x] COMPLETE — GPS recording (accuracy validation >100m rejected, location caching for offline, permission fallback message) — COMPLETE 2026-09-19
 - [x] Device orientation recording (accelerometer/gyro) — COMPLETE 2026-09-17 (complementary filter, quaternion/matrix conversion, smoothing)
 - [x] Camera intrinsics recording — COMPLETE 2026-09-17 (CameraIntrinsicsService with device database, projection matrix, undistortion)
 - [x] Video quality settings — COMPLETE 2026-09-17 (5 quality presets, adaptive selection based on device capabilities/storage)
@@ -692,8 +692,8 @@ CREATED → QUEUED → PROCESSING → RECONSTRUCTING → ALIGNING → OPTIMIZING
 - [x] Signed requests — COMPLETE 2026-09-17 (SecretManager HMAC-SHA256 signed URLs)
 - [x] Upload validation — COMPLETE 2026-09-16 (input validation utilities)
 - [x] Rate limiting (per-user) — COMPLETE 2026-09-16 (sliding window rate limiter)
-- [x] Anti-cheat foundations — PARTIAL (server-authoritative movement)
-- [x] Server-authoritative movement — PARTIAL (position validation)
+- [x] Anti-cheat foundations — COMPLETE 2026-09-19 (speed limit 600 u/s, teleport detection 500u, rate limit 30/s, position correction)
+- [x] Server-authoritative movement — COMPLETE 2026-09-19 (bounds checking -500 to 500, rotation normalization, anti-speedhack 60fps cap, activity logging)
 - [x] Secure asset access — COMPLETE 2026-09-16 (signed URLs, API key generation)
 - [x] Audit logging — COMPLETE 2026-09-16 (AuditLogger with event types)
 - [x] Secret management — COMPLETE 2026-09-17 (SecretManager with JWT, API keys, signed URLs, passwords)
@@ -710,13 +710,13 @@ CREATED → QUEUED → PROCESSING → RECONSTRUCTING → ALIGNING → OPTIMIZING
 ### Tasks
 
 - [x] Geospatial unit tests — COMPLETE 2026-09-16 (test_geolocation.py, 15 tests)
-- [x] Reconstruction tests — PARTIAL (mesh generation, optimization tested)
+- [x] Reconstruction tests — COMPLETE 2026-09-19 (camera pose, point cloud, feature extraction, feature matching tested)
 - [x] Multiplayer tests — COMPLETE 2026-09-16 (test_multiplayer.py, test_multiplayer_visibility.py)
 - [x] Backend integration tests — COMPLETE 2026-09-16 (test_api_integration.py, 11 tests)
 - [x] Mobile app tests — COMPLETE 2026-09-17 (__tests__/services.test.ts, 36 tests: file validation, upload progress, coordinate formatting, status display)
 - [x] PC client tests — COMPLETE 2026-09-17 (src/__tests__/main.test.ts, 42 tests: distance formatting, accuracy display, quality labels, HTML escaping, animation state, chat messages)
 - [x] Performance tests — COMPLETE 2026-09-16 (test_performance.py, 24 tests)
-- [x] End-to-end tests — PARTIAL (API integration, WebSocket tests, API contract tests covering all routers + error handling)
+- [x] End-to-end tests — COMPLETE 2026-09-19 (full WebSocket lifecycle, multiple players, position broadcast, chat relay)
 - [x] Additional service tests — COMPLETE 2026-09-16 (test_unit_services.py, 11 tests)
 
 ### Dependencies
