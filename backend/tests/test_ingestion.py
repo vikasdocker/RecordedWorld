@@ -62,8 +62,14 @@ class TestFileValidator:
         assert "does not exist" in result.errors[0]
 
     def test_wrong_extension(self, temp_dir):
+        # cv2's ffmpeg backend picks the container from the extension on
+        # Linux, so writing straight to .txt yields no file at all there.
+        # Write with a valid extension, then rename: the file must exist
+        # with real content but a wrong extension on every platform.
+        real_path = os.path.join(temp_dir, "test.mp4")
         video_path = os.path.join(temp_dir, "test.txt")
-        _create_test_video(video_path)
+        _create_test_video(real_path)
+        os.replace(real_path, video_path)
 
         result = validate_video_file(video_path)
         # Extension mismatch but OpenCV can still read it
