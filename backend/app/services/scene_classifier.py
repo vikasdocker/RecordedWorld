@@ -4,7 +4,7 @@ Scene Classification Service
 Classifies images into scene categories using color/histogram analysis.
 """
 import numpy as np
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 from dataclasses import dataclass
 
 
@@ -127,7 +127,6 @@ class SceneClassifier:
         water_pct = regions.get("water_blue", 0)
         concrete_pct = regions.get("concrete_gray", 0)
         earth_pct = regions.get("earth_brown", 0)
-        brightness = texture.get("brightness", 0.5)
         edge_density = texture.get("edge_density", 0)
 
         # Sky dominant

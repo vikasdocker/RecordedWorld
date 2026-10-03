@@ -4,7 +4,7 @@ World Service
 World state management and chunk operations.
 """
 
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
@@ -12,7 +12,6 @@ from app.core.world_precision import (
     ChunkIndex,
     FloatingOrigin,
     WorldCoordinateManager,
-    enu_to_chunk_relative,
 )
 from app.core.geospatial import WGS84Coordinate
 

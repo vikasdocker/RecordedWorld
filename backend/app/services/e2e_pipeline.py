@@ -1,5 +1,4 @@
 """End-to-end pipeline: Mobile capture -> Backend processing -> PC client display."""
-import asyncio
 from pathlib import Path
 from typing import Optional
 from datetime import datetime
@@ -52,7 +51,7 @@ class E2EPipeline:
 
             # Step 3: Extract and align frames
             self.active_jobs[capture_id]["step"] = "align"
-            aligned_frames = await self.alignment.align_frames(stitched_path)
+            await self.alignment.align_frames(stitched_path)
 
             # Step 4: Process video to 3D model
             self.active_jobs[capture_id]["step"] = "process_3d"
@@ -71,7 +70,7 @@ class E2EPipeline:
             # Step 6: Export world for PC client
             self.active_jobs[capture_id]["step"] = "export"
             output_dir = Path("uploads") / f"capture_{capture_id}"
-            config_path = generator.export_world(capture_id, output_dir)
+            generator.export_world(capture_id, output_dir)
 
             elapsed = (datetime.utcnow() - start_time).total_seconds() * 1000
 

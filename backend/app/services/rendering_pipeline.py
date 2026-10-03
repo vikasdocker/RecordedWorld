@@ -5,12 +5,12 @@ Manages the mixed-content rendering pipeline for the world.
 Handles layer ordering, culling, batching, and draw call generation.
 """
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
 
 from app.services.layer_compositor import WorldLayer, LayerType, CompositeResult
-from app.services.lod_system import LODManager, LODLevel, LODSelection
+from app.services.lod_system import LODManager
 
 
 class CullingMethod(Enum):

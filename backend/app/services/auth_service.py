@@ -6,7 +6,6 @@ User authentication, token management, and authorization.
 
 from typing import Optional
 from sqlalchemy.orm import Session
-from datetime import datetime, timezone, timedelta
 
 from app.models.user import User
 from app.services.secret_manager import get_secret_manager

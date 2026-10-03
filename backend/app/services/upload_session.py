@@ -4,7 +4,6 @@ Upload Session Tracking Service
 Manages upload sessions with resume capability.
 Tracks chunked uploads, validates integrity, and handles reconnection.
 """
-import hashlib
 import time
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set

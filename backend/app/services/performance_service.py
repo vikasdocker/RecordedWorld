@@ -6,8 +6,8 @@ Tracks CPU, memory, network, and server metrics.
 
 import time
 import threading
-from typing import Dict, List, Optional
-from dataclasses import dataclass, field
+from typing import Dict, List
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from collections import deque
 import statistics

@@ -4,7 +4,7 @@ Semantic Segmentation Service
 Provides basic semantic segmentation using color-based region classification.
 """
 import numpy as np
-from typing import Dict, List, Tuple
+from typing import Dict
 from dataclasses import dataclass
 
 

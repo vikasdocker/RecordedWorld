@@ -21,7 +21,7 @@ Metrics Format:
 import math
 import numpy as np
 from dataclasses import dataclass, field
-from typing import List, Optional, Tuple
+from typing import List, Optional
 from datetime import datetime, timezone
 
 from app.core.geospatial import WGS84Coordinate, haversine_distance
@@ -29,7 +29,6 @@ from app.services.geolocation import (
     LocalPoint,
     GPSPoint,
     GlobalTransform,
-    AccuracyReport,
 )
 
 

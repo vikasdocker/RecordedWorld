@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
 from app.models.capture import Capture
-from app.schemas.capture import CaptureCreate, CaptureResponse
+from app.schemas.capture import CaptureResponse
 from app.services.file_validator import validate_video_file
 from app.services.metadata_extractor import extract_video_metadata
 

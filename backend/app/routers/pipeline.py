@@ -8,7 +8,6 @@ from app.models.location import Location
 from app.core.spatial_index import compute_grid_cell_id
 from app.core.geospatial import WGS84Coordinate
 from app.services.e2e_pipeline import pipeline
-from app.services.testing import testing
 
 router = APIRouter(prefix="/api/pipeline", tags=["pipeline"])
 

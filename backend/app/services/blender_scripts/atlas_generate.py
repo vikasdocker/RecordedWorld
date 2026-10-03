@@ -38,10 +38,8 @@ def create_atlas():
     """
     args = load_args()
     input_mesh = args.get("input_mesh", "")
-    input_textures = args.get("input_textures", [])
     output_path = args.get("output_path", "")
     atlas_size = args.get("atlas_size", 2048)
-    padding = args.get("padding", 4)
 
     if not input_mesh:
         print("ERROR: input_mesh required")
@@ -91,7 +89,6 @@ def create_atlas():
 
     # Get the joined mesh
     joined_obj = bpy.context.active_object
-    mesh = joined_obj.data
 
     # Create atlas texture
     atlas_img = bpy.data.images.new(
@@ -168,9 +165,9 @@ def pack_textures():
     Pack multiple loose images into an atlas without mesh import.
     """
     args = load_args()
-    input_textures = args.get("input_textures", [])
     output_path = args.get("output_path", "")
     atlas_size = args.get("atlas_size", 2048)
+    input_textures = args.get("input_textures", [])
 
     if not input_textures:
         print("ERROR: input_textures list required")

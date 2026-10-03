@@ -59,9 +59,9 @@ def check_db_health() -> dict:
     try:
         with engine.connect() as conn:
             if settings.is_postgres:
-                result = conn.execute(text("SELECT 1"))
+                conn.execute(text("SELECT 1"))
             else:
-                result = conn.execute(text("SELECT 1"))
+                conn.execute(text("SELECT 1"))
             return {"status": "healthy", "database": "postgresql" if settings.is_postgres else "sqlite"}
     except Exception as e:
         return {"status": "unhealthy", "error": str(e)}

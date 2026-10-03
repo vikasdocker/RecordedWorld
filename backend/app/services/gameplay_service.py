@@ -5,7 +5,7 @@ Handles exploration, collection, quests, achievements, and player progression.
 """
 
 from datetime import datetime, timezone
-from typing import Optional, List, Dict
+from typing import Optional, List
 
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
@@ -179,7 +179,7 @@ class GameplayService:
             and_(
                 PlayerQuest.user_id == user_id,
                 PlayerQuest.quest_id == quest_id,
-                PlayerQuest.is_completed == False,
+                PlayerQuest.is_completed.is_(False),
             )
         ).first()
         if not pq:
@@ -202,7 +202,7 @@ class GameplayService:
         return self.db.query(PlayerQuest).filter(
             and_(
                 PlayerQuest.user_id == user_id,
-                PlayerQuest.is_completed == False,
+                PlayerQuest.is_completed.is_(False),
             )
         ).all()
 
@@ -211,7 +211,7 @@ class GameplayService:
         return self.db.query(PlayerQuest).filter(
             and_(
                 PlayerQuest.user_id == user_id,
-                PlayerQuest.is_completed == True,
+                PlayerQuest.is_completed.is_(True),
             )
         ).all()
 

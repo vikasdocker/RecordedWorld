@@ -10,7 +10,6 @@ Optimizes 3D meshes for real-time rendering:
 Uses OpenCV's built-in simplification and custom decimation.
 """
 
-import cv2
 import numpy as np
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
@@ -109,8 +108,6 @@ def decimate_mesh(
     """
     if mesh.num_faces == 0 or mesh.num_vertices == 0:
         return mesh
-
-    target_faces = max(4, int(mesh.num_faces * target_face_ratio))
 
     bbox_size = mesh.vertices.max(axis=0) - mesh.vertices.min(axis=0)
     bbox_diag = np.linalg.norm(bbox_size)

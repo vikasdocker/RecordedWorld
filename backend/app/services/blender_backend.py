@@ -9,7 +9,6 @@ Falls back to pure-Python implementations when Blender is unavailable.
 """
 
 import os
-import sys
 import json
 import shutil
 import logging
@@ -143,7 +142,7 @@ class BlenderBackend:
         if not p.is_file():
             return False
         # On Windows, check extension
-        if platform.system() == "Windows" and not p.suffix.lower() in (".exe", ""):
+        if platform.system() == "Windows" and p.suffix.lower() not in (".exe", ""):
             return False
         return True
 

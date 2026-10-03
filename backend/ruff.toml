@@ -1,0 +1,12 @@
+# Ruff baseline for Recorded World backend.
+#
+# Pinned explicitly: ruff's built-in defaults broaden over time, which would
+# retroactively break CI on a fixed pipeline. These are the classic pycodestyle
+# + pyflakes correctness rules (E4/E7/E9/F) — the same set historically used as
+# ruff's default. Expand deliberately via review, not by upgrading the tool.
+[lint]
+select = ["E4", "E7", "E9", "F"]
+
+[lint.per-file-ignores]
+# Blender runs these as standalone scripts where imports follow bpy setup.
+"app/services/blender_scripts/*" = ["E402"]

@@ -1,7 +1,6 @@
 """Performance optimization service for low-latency multiplayer."""
-import asyncio
 import time
-from typing import Dict, List, Optional
+from typing import Dict
 from dataclasses import dataclass, field
 from collections import deque
 import json

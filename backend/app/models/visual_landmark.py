@@ -3,7 +3,7 @@ Visual Landmarks Model
 
 Stores visual features extracted from captures for visual localization.
 """
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, Float, LargeBinary
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Float, LargeBinary
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

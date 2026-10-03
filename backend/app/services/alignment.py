@@ -1,9 +1,7 @@
 """Frame alignment service - ensures temporal and spatial consistency."""
 import asyncio
-from pathlib import Path
 from typing import List, Dict, Optional
 from dataclasses import dataclass
-import math
 
 
 @dataclass

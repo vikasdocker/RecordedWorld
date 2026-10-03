@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.auth import get_current_user_id
 from app.models.user import User
-from app.models.role import Role, ROLE_LEVELS
+from app.models.role import ROLE_LEVELS
 
 
 def get_user_roles(db: Session, user_id: int) -> list[str]:

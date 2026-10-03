@@ -4,16 +4,13 @@ Location Service
 Location CRUD, nearby search, and category management.
 """
 
-from typing import List, Optional, Tuple
+from typing import List, Optional
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func
 
 from app.core.geospatial import WGS84Coordinate, haversine_distance
 from app.core.spatial_index import compute_grid_cell_id, search_locations_sql
 from app.models.location import Location
 from app.models.category import Category
-from app.models.tag import Tag, location_tags
-from app.models.user import User
 from app.services.friendship_service import FriendshipService
 
 DEFAULT_CELL_SIZE = 100.0

@@ -7,7 +7,7 @@ Handles conflict resolution, retry logic, and progressive sync.
 import time
 import hashlib
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 from enum import Enum
 
 

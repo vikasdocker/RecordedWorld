@@ -12,8 +12,6 @@ Processes captured video into 3D environments using real computer vision:
 - glTF/GLB export
 """
 
-import asyncio
-import json
 import logging
 from pathlib import Path
 from typing import Optional
@@ -22,12 +20,12 @@ from datetime import datetime, timezone
 import numpy as np
 
 from app.services.frame_extractor import extract_frames, get_video_info
-from app.services.quality_analyzer import analyze_frame, analyze_video_quality, QualityGrade
+from app.services.quality_analyzer import analyze_video_quality
 from app.services.frame_deduplicator import deduplicate_frames
 from app.services.point_cloud_generator import generate_point_cloud_from_video, PointCloud
 from app.services.feature_extractor import FeatureMethod
-from app.services.mesh_generator import mesh_from_point_cloud, Mesh, export_obj, export_ply
-from app.services.mesh_optimizer import optimize_mesh_for_rendering, generate_lod_chain
+from app.services.mesh_generator import mesh_from_point_cloud, Mesh, export_obj
+from app.services.mesh_optimizer import optimize_mesh_for_rendering
 from app.services.glTF_export import export_glb
 
 logger = logging.getLogger(__name__)

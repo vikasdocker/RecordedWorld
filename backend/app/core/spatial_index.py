@@ -14,10 +14,10 @@ Cell ID format: "{lat_cell}:{lon_cell}" (string for SQLite compatibility)
 """
 
 import math
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 from dataclasses import dataclass
 
-from app.core.geospatial import WGS84Coordinate, haversine_distance, _meters_per_degree_latitude, _meters_per_degree_longitude
+from app.core.geospatial import WGS84Coordinate, _meters_per_degree_latitude, _meters_per_degree_longitude
 
 
 @dataclass(frozen=True)
@@ -88,8 +88,6 @@ def compute_candidate_cells(
     center_cell = GridCell.from_coordinate(center, cell_size_meters)
 
     # How many cells does the radius span in each direction?
-    d_lat_deg = _cell_size_degrees_lat(center.latitude, cell_size_meters)
-    d_lon_deg = _cell_size_degrees_lon(center.latitude, cell_size_meters)
 
     # Convert radius to approximate cell count (add 1 for safety)
     n_lat = int(math.ceil(radius_meters / cell_size_meters)) + 1

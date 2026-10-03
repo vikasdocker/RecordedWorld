@@ -4,7 +4,6 @@ Image Enhancement Service
 Provides basic image enhancement for reconstruction quality.
 """
 import numpy as np
-from typing import Optional
 from dataclasses import dataclass
 
 

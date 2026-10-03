@@ -6,7 +6,7 @@ Per-user rate limiting with sliding window.
 
 import time
 import threading
-from typing import Dict, Optional, Tuple
+from typing import Dict, Tuple
 from collections import defaultdict
 
 

@@ -6,7 +6,7 @@ Sanitize and validate user inputs.
 
 import re
 import html
-from typing import Optional, Tuple
+from typing import Tuple
 
 
 # Constants

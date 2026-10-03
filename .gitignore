@@ -35,3 +35,15 @@ ue-client/Content/Python/
 *~
 .DS_Store
 Thumbs.db
+
+# Runtime logs
+logs/
+backend/logs/
+*.log
+
+# Python virtualenvs
+.venv/
+.venv*/
+venv/
+env/
+

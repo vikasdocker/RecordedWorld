@@ -299,9 +299,9 @@ def get_audit_log(
     """Get the moderation audit log, optionally filtered by location or action."""
     logs = _audit_log
     if location_id is not None:
-        logs = [l for l in logs if l["location_id"] == location_id]
+        logs = [entry for entry in logs if entry["location_id"] == location_id]
     if action:
-        logs = [l for l in logs if l["action"] == action]
+        logs = [entry for entry in logs if entry["action"] == action]
     return logs[:limit]
 
 

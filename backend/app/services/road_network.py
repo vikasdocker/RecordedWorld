@@ -5,7 +5,7 @@ Converts road segments from map data into 3D road geometry.
 Handles road width, lanes, surfaces, and intersections.
 """
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
 from app.services.vector_ingester import RoadSegment, RoadType

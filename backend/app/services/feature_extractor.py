@@ -153,7 +153,6 @@ def extract_features_from_video(
         raise ValueError(f"Cannot open video: {video_path}")
 
     video_fps = cap.get(cv2.CAP_PROP_FPS)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     if video_fps <= 0:
         video_fps = 30.0

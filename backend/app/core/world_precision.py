@@ -14,7 +14,7 @@ Architecture:
 
 import math
 from dataclasses import dataclass, field
-from typing import Tuple, Optional, Dict
+from typing import Dict
 from app.core.geospatial import (
     WGS84Coordinate,
     ENUVector,

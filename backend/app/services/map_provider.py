@@ -4,11 +4,10 @@ Base Map Provider Abstraction
 Provides a unified interface for fetching map data from different providers.
 Supports OpenStreetMap, Mapbox, and custom tile servers.
 """
-import json
 import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from enum import Enum
 
 

@@ -8,7 +8,6 @@ Parses OpenStreetMap data into game-ready vector features:
   - Water features (polygons)
   - POI points
 """
-import json
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum

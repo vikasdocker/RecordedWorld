@@ -3,7 +3,7 @@ Permission Model
 
 Granular permission system for resources.
 """
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, UniqueConstraint
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

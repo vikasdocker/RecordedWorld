@@ -3,7 +3,7 @@ Role Model
 
 RBAC system for user authorization.
 """
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Table, UniqueConstraint
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

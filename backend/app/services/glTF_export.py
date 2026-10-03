@@ -15,7 +15,7 @@ import struct
 import json
 import numpy as np
 from pathlib import Path
-from typing import Optional, List
+from typing import List
 from dataclasses import dataclass
 
 from app.services.mesh_generator import Mesh

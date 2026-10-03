@@ -4,7 +4,7 @@ Video Quality Settings Service
 Manages video capture quality presets and adaptive quality selection
 based on device capabilities and storage constraints.
 """
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 from enum import Enum
 

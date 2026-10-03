@@ -12,15 +12,13 @@ Output: XYZ points with RGB color for mesh generation.
 import cv2
 import numpy as np
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
 
 from app.services.feature_extractor import (
-    DetectedFeatures, MatchResult, extract_features, extract_features_from_video,
-    match_features, create_detector, FeatureMethod
+    extract_features_from_video,
+    match_features, FeatureMethod
 )
 from app.services.camera_pose import (
-    CameraPose, CameraIntrinsics, TriangulationResult,
-    estimate_camera_pose, triangulate_points, build_projection_matrix,
+    CameraPose, CameraIntrinsics, estimate_camera_pose, triangulate_points, build_projection_matrix,
 )
 
 

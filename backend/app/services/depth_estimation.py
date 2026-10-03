@@ -158,6 +158,8 @@ class DepthEstimator:
     def _estimate_dnn(self, image: np.ndarray) -> DepthResult:
         """Estimate depth using pre-trained DNN model."""
         # Placeholder for MiDaS/DPT integration
+        import cv2
+
         h, w = image.shape[:2]
         blob = cv2.dnn.blobFromImage(image, 1.0 / 255.0, (384, 384))
         self._net.setInput(blob)

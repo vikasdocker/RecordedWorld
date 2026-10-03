@@ -10,21 +10,20 @@ Features:
 """
 
 import asyncio
-import json
 import logging
 import math
 import time
-from typing import Dict, Set, Optional, List, Tuple
+from typing import Dict, Set, Optional, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
-
-logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.core.geospatial import haversine_distance, WGS84Coordinate
+
+logger = logging.getLogger(__name__)
 
 
 class PlayerVisibility(str, Enum):
@@ -304,8 +303,6 @@ class MultiplayerServer:
                 "detail": f"Invalid visibility. Must be one of: {valid_visibilities}",
             })
             return
-
-        old_visibility = player.visibility
         player.visibility = PlayerVisibility(new_vis)
 
         # Confirm to the player
@@ -632,16 +629,13 @@ class MultiplayerServer:
     def _enforce_bounds(self, position: dict) -> dict:
         """Clamp position to world bounds (-500 to 500) on all axes."""
         result = position.copy()
-        clamped = False
 
         for axis in ("x", "y", "z", "lat", "lon", "alt"):
             if axis in result:
                 if result[axis] < self.world_min:
                     result[axis] = self.world_min
-                    clamped = True
                 elif result[axis] > self.world_max:
                     result[axis] = self.world_max
-                    clamped = True
 
         return result
 

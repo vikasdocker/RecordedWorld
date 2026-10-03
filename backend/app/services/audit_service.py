@@ -4,8 +4,6 @@ Audit Logging Service
 Tracks security-relevant actions for compliance and forensics.
 """
 
-import time
-import json
 import threading
 from typing import Dict, Optional, List, Any
 from dataclasses import dataclass, field

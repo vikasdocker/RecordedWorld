@@ -15,7 +15,6 @@ Rendering: Use ENU/local coordinates for game world positions.
 
 import math
 from dataclasses import dataclass
-from typing import Optional
 
 
 # WGS84 ellipsoid constants

@@ -5,7 +5,7 @@ Processes building footprints from map data into 3D geometry.
 Extrudes polygons to building heights, generates roof geometry.
 """
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
 from app.services.vector_ingester import BuildingFootprint, BuildingType

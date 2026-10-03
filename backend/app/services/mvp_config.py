@@ -4,8 +4,8 @@ MVP Configuration
 Defines the MVP scope, components, and validation.
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from dataclasses import dataclass
+from typing import Dict, Optional
 
 
 @dataclass

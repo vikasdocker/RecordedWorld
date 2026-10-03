@@ -5,10 +5,9 @@ File upload, validation, and thumbnail management.
 """
 
 import os
-import uuid
 import hashlib
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Tuple
 from datetime import datetime, timezone
 
 from app.core.config import settings

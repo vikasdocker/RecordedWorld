@@ -5,9 +5,8 @@ In-memory job queue with async-ready architecture.
 Replace with Redis/Celery for production.
 """
 
-import asyncio
 import uuid
-from typing import Optional, List, Dict, Callable, Any
+from typing import Optional, List, Dict, Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum

@@ -5,8 +5,8 @@ Handles DEM (Digital Elevation Model) and heightmap data for terrain generation.
 Supports SRTM, GeoTIFF, and heightmap image formats.
 """
 import math
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from typing import Any, Dict, Optional, Tuple
 import numpy as np
 
 

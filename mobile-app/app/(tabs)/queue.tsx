@@ -104,10 +104,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 8,
   },
-  statusText: {
-    color: Colors.textSecondary,
-    fontSize: 14,
-  },
   queueCount: {
     color: Colors.primary,
     fontSize: 16,

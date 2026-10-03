@@ -6,7 +6,7 @@ Each layer is independently managed and composited at render time.
 """
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from enum import Enum
 
 
@@ -109,11 +109,14 @@ class LayerCompositor:
         )
 
     def get_user_layers(self) -> List[WorldLayer]:
-        return [l for l in self.layers.values() if l.is_user_content]
+        return [layer for layer in self.layers.values() if layer.is_user_content]
 
     def get_base_layers(self) -> List[WorldLayer]:
-        return [l for l in self.layers.values()
-                if l.type in (LayerType.TERRAIN, LayerType.BASE_MAP)]
+        return [
+            layer
+            for layer in self.layers.values()
+            if layer.type in (LayerType.TERRAIN, LayerType.BASE_MAP)
+        ]
 
     def _sort_render_order(self):
         self.render_order.sort(
@@ -124,7 +127,7 @@ class LayerCompositor:
     def _compute_combined_bounds(
         self, layers: List[WorldLayer]
     ) -> Optional[Dict[str, float]]:
-        all_bounds = [l.bounds for l in layers if l.bounds]
+        all_bounds = [layer.bounds for layer in layers if layer.bounds]
         if not all_bounds:
             return None
 
@@ -138,7 +141,7 @@ class LayerCompositor:
     def get_stats(self) -> Dict[str, Any]:
         return {
             "total_layers": len(self.layers),
-            "visible_layers": sum(1 for l in self.layers.values() if l.visible),
+            "visible_layers": sum(1 for layer in self.layers.values() if layer.visible),
             "user_layers": len(self.get_user_layers()),
             "base_layers": len(self.get_base_layers()),
         }

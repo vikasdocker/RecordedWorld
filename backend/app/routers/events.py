@@ -11,7 +11,6 @@ from app.core.database import get_db
 from app.models.gameplay import (
     GameEvent, EventParticipant, VirtualMeetup, MeetupParticipant
 )
-from app.models.user import User
 from app.schemas.event import (
     EventCreate, EventResponse, EventParticipantResponse,
     MeetupCreate, MeetupResponse, MeetupParticipantResponse

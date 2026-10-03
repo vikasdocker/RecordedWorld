@@ -4,7 +4,6 @@ Upload Jobs API endpoints — resumable uploads with TUS support.
 import uuid
 import hashlib
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
-from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime, timezone, timedelta
@@ -12,7 +11,6 @@ from datetime import datetime, timezone, timedelta
 from app.core.config import settings
 from app.core.database import get_db
 from app.models.upload_job import UploadJob
-from app.schemas.event import EventResponse  # reuse if needed
 
 router = APIRouter(prefix="/api/uploads", tags=["uploads"])
 

@@ -6,7 +6,7 @@ Implements budget-based eviction and memory pools.
 """
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 from enum import Enum
 
 

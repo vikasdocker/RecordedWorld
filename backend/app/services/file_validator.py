@@ -9,7 +9,6 @@ Validates uploaded video files for:
 - Resolution limits
 """
 
-import os
 import cv2
 from pathlib import Path
 from dataclasses import dataclass

@@ -1,14 +1,12 @@
 """Monitoring and logging service."""
 import logging
-import json
 import time
 from pathlib import Path
 from typing import Dict, List, Optional
-from datetime import datetime, timedelta
-from dataclasses import dataclass, field, asdict
+from datetime import datetime
+from dataclasses import dataclass, field
 from collections import deque
 import asyncio
-import os
 
 
 LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"

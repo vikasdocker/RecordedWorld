@@ -14,7 +14,7 @@ Parties have a leader, members, invite system, and shared world state.
 import uuid
 import time
 from enum import Enum
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set
 from dataclasses import dataclass, field
 
 

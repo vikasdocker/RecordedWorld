@@ -12,10 +12,8 @@ import cv2
 import numpy as np
 import hashlib
 from pathlib import Path
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional, List
-import os
-import struct
 
 
 @dataclass
@@ -148,7 +146,7 @@ def extract_metadata_batch(file_paths: List[str]) -> List[VideoMetadata]:
     for path in file_paths:
         try:
             results.append(extract_video_metadata(path))
-        except Exception as e:
+        except Exception:
             results.append(VideoMetadata(
                 file_path=path, file_size_bytes=0, file_hash_sha256="",
                 width=0, height=0, fps=0, total_frames=0, duration_seconds=0,

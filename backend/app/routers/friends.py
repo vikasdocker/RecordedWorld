@@ -3,9 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from app.core.database import get_db
-from app.core.auth import get_current_user_id
 from app.models.user import User
-from app.models.friendship import Friendship
 from app.schemas.friendship import (
     FriendRequestCreate,
     FriendshipResponse,

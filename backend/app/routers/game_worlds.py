@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models.game_world import GameWorld
-from app.schemas.capture import CaptureResponse
 
 router = APIRouter(prefix="/api/worlds", tags=["worlds"])
 

@@ -15,7 +15,6 @@ import bpy
 import os
 import sys
 import json
-import struct
 from pathlib import Path
 
 
@@ -43,7 +42,6 @@ def compress_texture(input_path: str, output_path: str, quality: str = "high"):
     output_path = args.get("output_path", output_path)
     quality = args.get("quality", quality)
     max_size = args.get("max_size", 2048)
-    generate_mipmaps = args.get("generate_mipmaps", False)
 
     # Clear default scene
     bpy.ops.wm.read_factory_settings(use_empty=True)

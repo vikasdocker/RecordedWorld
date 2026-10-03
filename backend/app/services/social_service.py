@@ -4,7 +4,7 @@ Social Service
 Friends, reports, and social interactions.
 """
 
-from typing import List, Optional, Tuple
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 

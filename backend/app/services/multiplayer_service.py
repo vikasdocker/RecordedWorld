@@ -4,7 +4,7 @@ Multiplayer Service
 WebSocket connection management and spatial interest.
 """
 
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 

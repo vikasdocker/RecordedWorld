@@ -11,15 +11,12 @@ to pure-Python implementations when Blender is unavailable.
 import os
 import json
 import logging
-import tempfile
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 from dataclasses import dataclass, field
 
-from app.services.blender_backend import blender_backend, BlenderResult
-from app.services.mesh_optimizer import decimate_mesh, generate_lod_chain, compute_mesh_stats
-from app.services.glTF_export import export_glb, mesh_to_glb_bytes, AssetMetadata
-from app.services.mesh_generator import Mesh, Triangle
+from app.services.blender_backend import blender_backend
+from app.services.glTF_export import AssetMetadata
 
 logger = logging.getLogger(__name__)
 

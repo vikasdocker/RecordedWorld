@@ -7,7 +7,7 @@ Each tile contains terrain, buildings, roads, and other map features.
 import math
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Tuple
 from enum import Enum
 
 from app.services.map_provider import GeoBounds, TileCoords, MapTile

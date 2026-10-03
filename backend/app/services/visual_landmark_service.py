@@ -5,11 +5,11 @@ Manages visual landmarks for visual localization.
 """
 import hashlib
 import numpy as np
-from typing import List, Optional, Tuple
+from typing import List, Optional
 from dataclasses import dataclass
 from sqlalchemy.orm import Session
 
-from app.models.visual_landmark import VisualLandmark, LandmarkMatch
+from app.models.visual_landmark import VisualLandmark
 
 
 @dataclass

@@ -14,11 +14,9 @@ And exports to standard formats:
 
 import cv2
 import numpy as np
-from dataclasses import dataclass, field
-from typing import List, Optional, Tuple
+from dataclasses import dataclass
+from typing import List, Optional
 from pathlib import Path
-import struct
-import json
 
 
 @dataclass
@@ -240,7 +238,7 @@ def export_obj(mesh: Mesh, path: str, texture_filename: str = "texture.jpg"):
     mesh.compute_normals()
 
     with open(path, "w") as f:
-        f.write(f"# Recorded World Mesh\n")
+        f.write("# Recorded World Mesh\n")
         f.write(f"# Vertices: {mesh.num_vertices}, Faces: {mesh.num_faces}\n")
         f.write(f"mtllib {Path(texture_filename).stem}.mtl\n\n")
 
@@ -263,7 +261,7 @@ def export_obj(mesh: Mesh, path: str, texture_filename: str = "texture.jpg"):
                 f.write(f"vn {face.normal[0]:.6f} {face.normal[1]:.6f} {face.normal[2]:.6f}\n")
 
         # Faces
-        f.write(f"\nusemtl material0\n")
+        f.write("\nusemtl material0\n")
         for i, face in enumerate(mesh.faces):
             v0, v1, v2 = face.v0 + 1, face.v1 + 1, face.v2 + 1
             if mesh.uv_coords is not None:
@@ -274,11 +272,11 @@ def export_obj(mesh: Mesh, path: str, texture_filename: str = "texture.jpg"):
     # Write MTL file
     mtl_path = str(Path(path).with_suffix(".mtl"))
     with open(mtl_path, "w") as f:
-        f.write(f"# Material file\n")
-        f.write(f"newmtl material0\n")
-        f.write(f"Ka 0.2 0.2 0.2\n")
-        f.write(f"Kd 0.8 0.8 0.8\n")
-        f.write(f"Ks 0.0 0.0 0.0\n")
+        f.write("# Material file\n")
+        f.write("newmtl material0\n")
+        f.write("Ka 0.2 0.2 0.2\n")
+        f.write("Kd 0.8 0.8 0.8\n")
+        f.write("Ks 0.0 0.0 0.0\n")
         f.write(f"map_Kd {texture_filename}\n")
 
 

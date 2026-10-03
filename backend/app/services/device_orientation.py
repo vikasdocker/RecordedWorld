@@ -5,7 +5,7 @@ Processes accelerometer and gyroscope data from mobile devices.
 Converts device orientation to world-space rotation for 3D reconstruction.
 """
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
 import numpy as np

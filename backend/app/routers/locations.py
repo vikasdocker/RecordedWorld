@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional
 from pathlib import Path
@@ -12,9 +12,7 @@ from app.core.spatial_index import compute_grid_cell_id, search_locations_sql
 from app.models.location import Location
 from app.models.capture import Capture
 from app.models.category import Category
-from app.models.tag import Tag, location_tags
-from app.models.user import User
-from app.schemas.location import LocationCreate, LocationResponse, LocationPublic
+from app.schemas.location import LocationCreate, LocationResponse
 from app.services.friendship_service import FriendshipService
 
 router = APIRouter(prefix="/api/locations", tags=["locations"])

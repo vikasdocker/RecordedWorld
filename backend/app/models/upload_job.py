@@ -3,7 +3,7 @@ Upload Job Model
 
 Tracks file uploads with resumable support.
 """
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, Float, Boolean
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, Float
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

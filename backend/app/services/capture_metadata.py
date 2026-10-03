@@ -4,9 +4,7 @@ Capture Metadata Validation Service
 Validates and normalizes capture metadata from mobile devices.
 Ensures required fields are present and values are within acceptable ranges.
 """
-import json
-import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
 
